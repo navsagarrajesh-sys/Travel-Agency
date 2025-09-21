@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>TripTrack Cabs - Outstation Car Rentals</title>
+  <link rel="stylesheet" href="public/css/style.css" />
+  <!-- Font Awesome CDN for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <!-- Flatpickr CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/material_blue.css" />
+</head>
+<body>
+  <header class="header" role="banner">
+    <div class="header__brand">
+      <span class="brand__logo" aria-label="Car icon" role="img">🚗</span>
+      <span class="brand__name">TripTrack Cabs</span>
+    </div>
+    <div class="header__center">
+      <span class="offer-btn disabled" aria-disabled="true">Book Now &amp; Get 20% OFF</span>
+    </div>
+    <div class="header__cta">
+      <a href="tel:+919657323988" class="cta__phone" aria-label="Call phone number">+91 9657323988</a>
+      <button class="cta__login header__btn login-btn" aria-haspopup="dialog" aria-controls="loginModal">Login</button>
+    </div>
+    <a href="tel:+919657323988" class="floating-btn call-btn" title="Call Us" aria-label="Call Us">
+      <i class="fas fa-phone" aria-hidden="true"></i>
+    </a>
+    <a href="https://wa.me/919657323988" target="_blank" rel="noopener" class="floating-btn whatsapp-btn" title="WhatsApp" aria-label="WhatsApp">
+      <i class="fab fa-whatsapp" aria-hidden="true"></i>
+    </a>
+  </header>
+
+  <!-- Login Modal -->
+  <div id="loginModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="loginTitle" style="display:none;">
+    <div class="modal-content">
+      <button id="closeLogin" class="close-btn" aria-label="Close Login Modal">&times;</button>
+      <h2 id="loginTitle">Customer Login</h2>
+      <form id="loginForm" novalidate>
+        <label for="email">Email or Phone</label>
+        <input type="text" id="email" name="email" required placeholder="Enter your registered email or phone" autocomplete="username" />
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" required placeholder="Enter password" autocomplete="current-password" />
+        <button type="submit" class="savaari-btn" style="width: 100%; margin-top: 12px;">Login</button>
+        <div style="text-align:center; margin-top: 10px;">
+          New user? <button type="button" id="openSignup" style="border:none; background:none; color:#ff6600; cursor:pointer;">Sign Up</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Signup Modal -->
+  <div id="signupModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="signupTitle" style="display:none;">
+    <div class="modal-content">
+      <button id="closeSignup" class="close-btn" aria-label="Close Signup Modal">&times;</button>
+      <h2 id="signupTitle">Create Account</h2>
+      <form id="signupForm" novalidate>
+        <label for="signupEmail">Email or Phone</label>
+        <input type="text" id="signupEmail" name="signupEmail" required placeholder="Enter your email or phone" autocomplete="username" />
+        <label for="signupPassword">Password</label>
+        <input type="password" id="signupPassword" name="signupPassword" required placeholder="Create a password" autocomplete="new-password" />
+        <button type="submit" class="savaari-btn" style="width: 100%; margin-top: 12px;">Sign Up</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Booking Form -->
+  <main>
+    <section class="glass-form-card" aria-label="Booking form">
+      <div class="form-tabs" role="tablist" aria-label="Trip type tabs">
+        <button class="tab active" role="tab" aria-selected="true" aria-controls="onewayPanel" id="onewayTab" data-trip="oneway" tabindex="0">ONE WAY</button>
+        <button class="tab" role="tab" aria-selected="false" aria-controls="roundtripPanel" id="roundtripTab" data-trip="roundtrip" tabindex="-1">ROUND TRIP</button>
+        <button class="tab" role="tab" aria-selected="false" aria-controls="localPanel" id="localTab" data-trip="local" tabindex="-1">LOCAL</button>
+        <button class="tab" role="tab" aria-selected="false" aria-controls="airportPanel" id="airportTab" data-trip="airport" tabindex="-1">AIRPORT</button>
+      </div>
+      <form id="bookingForm" class="booking__form-glass" novalidate>
+        <div class="form-row">
+          <div class="form-group location-select-group">
+            <label for="fromLocation"><i class="fa fa-search" aria-hidden="true"></i> PICKUP LOCATION</label>
+            <input id="fromLocation" type="text" placeholder="Enter Pickup Location" autocomplete="off" required aria-autocomplete="list" aria-controls="fromDropdown" />
+            <div id="fromDropdown" class="location-dropdown" role="listbox" aria-label="Pickup location suggestions"></div>
+            <button type="button" class="swap-btn" title="Swap Pickup and Drop Locations" aria-label="Swap Pickup and Drop Locations">
+              <i class="fa fa-arrows-alt-h" aria-hidden="true"></i>
+            </button>
+          </div>
+          <div class="form-group location-select-group">
+            <label for="toLocation"><i class="fa fa-search" aria-hidden="true"></i> DROP LOCATION</label>
+            <input id="toLocation" type="text" placeholder="Enter Drop Location" autocomplete="off" required aria-autocomplete="list" aria-controls="toDropdown" />
+            <div id="toDropdown" class="location-dropdown" role="listbox" aria-label="Drop location suggestions"></div>
+          </div>
+          <div class="form-group" id="returnDateGroup" style="display:none;">
+            <label for="returnDate"><i class="fa fa-calendar" aria-hidden="true"></i> RETURN DATE</label>
+            <input id="returnDate" class="datetimepicker" type="text" placeholder="Return Date" />
+          </div>
+          <div class="form-group">
+            <label for="pickupDate"><i class="fa fa-calendar" aria-hidden="true"></i> PICK UP DATE</label>
+            <input id="pickupDate" class="datetimepicker" type="text" placeholder="Pick Up Date" required />
+          </div>
+          <div class="form-group">
+            <label for="pickupTime"><i class="fa fa-clock" aria-hidden="true"></i> PICK UP TIME</label>
+            <input id="pickupTime" class="timepicker" type="text" placeholder="Pick Up Time" required />
+          </div>
+        </div>
+        <div class="form-group" id="carSelection" style="display:none;">
+          <label for="carList">Select Vehicle</label>
+          <select id="carList" required>
+            <option value="">Select a car</option>
+          </select>
+          <div id="selectedCarInfo" style="margin-top: 10px; font-weight: 600;"></div>
+        </div>
+        <button type="submit" class="explore-cabs-btn">EXPLORE CABS</button>
+      </form>
+    </section>
+  </main>
+
+  <!-- About Section -->
+  <section class="aboutus-shiv" aria-label="Welcome to TripTrack Cabs">
+    <div class="aboutus-shiv__container">
+      <div class="aboutus-shiv__img">
+        <img src="public/images/road-car.jpg" alt="TripTrack Cabs car and road" />
+      </div>
+      <div class="aboutus-shiv__box">
+        <h2 class="aboutus-shiv__headline"><span class="aboutus-shiv__orange">Welcome To TripTrack Cabs</span></h2>
+        <h3 class="aboutus-shiv__subtitle">Travel services of the highest quality</h3>
+        <p class="aboutus-shiv__desc">
+          Find the most Affordable Car Rental Service in Pune. We have well maintained Clean and Neat Cabs.
+          We have a variety of fleet options like Tata Zest, Swift Dzire, Toyota Etios, Hyundai Xcent, Renault Lodgy,
+          Maruti Ertiga, Mahindra Zylo, Chevrolet Tavera, Toyota Innova, Innova Crysta, Tempo Traveller 13/17 seater,
+          Bus/luxury buses 45+ seater/sleeper.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Services Section -->
+  <section class="services-section custom-style" aria-label="Our Services">
+    <div class="services-container">
+      <div class="services-content">
+        <h2 class="services-heading-center">Services</h2>
+        <div class="services-columns">
+          <div class="services-list">
+            <a href="index.html?pickup=Pune, Maharashtra&amp;drop=Nashik" class="service-link"><i class="fas fa-angle-right" aria-hidden="true"></i> Pune To Nashik</a>
+            <a href="index.html?pickup=Pune, Maharashtra&amp;drop=Goa" class="service-link"><i class="fas fa-angle-right" aria-hidden="true"></i> Pune To Goa</a>
+            <a href="index.html?pickup=Pune, Maharashtra&amp;drop=Kolhapur" class="service-link"><i class="fas fa-angle-right" aria-hidden="true"></i> Pune To Kolhapur</a>
+            <a href="index.html?pickup=Pune, Maharashtra&amp;drop=Mahabaleshwar" class="service-link"><i class="fas fa-angle-right" aria-hidden="true"></i> Pune To Mahabaleshwar</a>
+            <a href="index.html?pickup=Pune, Maharashtra&amp;drop=Mumbai" class="service-link"><i class="fas fa-angle-right" aria-hidden="true"></i> Pune Mumbai Pune Round Trip</a>
+            <a href="index.html?pickup=Pune, Maharashtra&amp;drop=Shirdi" class="service-link"><i class="fas fa-angle-right" aria-hidden="true"></i> Pune To Shirdi Pickup Drop</a>
+            <a href="index.html?pickup=Mumbai&amp;drop=Kolhapur" class="service-link"><i class="fas fa-angle-right" aria-hidden="true"></i> Mumbai To Kolhapur</a>
+            <a href="index.html?pickup=Mumbai&amp;drop=Mahabaleshwar" class="service-link"><i class="fas fa-angle-right" aria-hidden="true"></i> Mumbai To Mahabaleshwar</a>
+            <a href="index.html?pickup=Mumbai&amp;drop=Ashtavinayak" class="service-link"><i class="fas fa-angle-right" aria-hidden="true"></i> Mumbai To Ashtavinayak Darshan</a>
+            <a href="index.html?pickup=Mumbai&amp;drop=Jyotirlinga" class="service-link"><i class="fas fa-angle-right" aria-hidden="true"></i> Mumbai To 5 Jyotirlinga Darshan</a>
+            <a href="index.html?pickup=Mumbai&amp;drop=Nashik" class="service-link"><i class="fas fa-angle-right" aria-hidden="true"></i> Mumbai To Nashik</a>
+            <a href="index.html?pickup=Mumbai&amp;drop=Mumbai" class="service-link"><i class="fas fa-angle-right" aria-hidden="true"></i> Mumbai Darshan</a>
+            <a href="index.html?pickup=Shirdi&amp;drop=Mumbai" class="service-link"><i class="fas fa-angle-right" aria-hidden="true"></i> Shirdi To Mumbai</a>
+            <a href="index.html?pickup=Pune, Maharashtra&amp;drop=Ashtavinayak" class="service-link"><i class="fas fa-angle-right" aria-hidden="true"></i> Pune To Ashtavinayak</a>
+            <a href="index.html?pickup=Goa&amp;drop=Pune, Maharashtra" class="service-link"><i class="fas fa-angle-right" aria-hidden="true"></i> Goa To Pune</a>
+            <a href="index.html?pickup=Goa&amp;drop=Mumbai" class="service-link"><i class="fas fa-angle-right" aria-hidden="true"></i> Goa To Mumbai</a>
+            <a href="index.html?pickup=Pune, Maharashtra&amp;drop=Airport" class="service-link"><i class="fas fa-angle-right" aria-hidden="true"></i> Pune Airport Service</a>
+            <a href="index.html?pickup=Kolhapur&amp;drop=Pune, Maharashtra" class="service-link"><i class="fas fa-angle-right" aria-hidden="true"></i> Kolhapur To Pune</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Why Choose TripTrack Cabs -->
+  <section class="whytriptrack-section" aria-label="Why Choose TripTrack Cabs">
+    <h2 class="whytriptrack-mainhead">Why Choose TripTrack Cabs?</h2>
+    <h3 class="whytriptrack-subhead">What Makes Us the Best Choice</h3>
+    <div class="whytriptrack-features">
+      <div class="whytriptrack-feature">
+        <i class="fa-solid fa-headset" aria-hidden="true"></i>
+        <h3>24/7 Live Support</h3>
+        <p>Our team is always ready to assist you, no matter the time of day. We're here whenever you need us—call, chat, or WhatsApp!</p>
+      </div>
+      <div class="whytriptrack-feature">
+        <i class="fa-solid fa-shield" aria-hidden="true"></i>
+        <h3>Best Price Assurance</h3>
+        <p>Get real value for your money—no hidden charges, transparent pricing, and refund guarantee (*T&amp;C apply).</p>
+      </div>
+      <div class="whytriptrack-feature">
+        <i class="fa-solid fa-clock" aria-hidden="true"></i>
+        <h3>On-time Pickup</h3>
+        <p>We promise punctual pickups, every time. Ride with TripTrack peace of mind—your car will always be on time!</p>
+      </div>
+      <div class="whytriptrack-feature">
+        <i class="fa-solid fa-user-shield" aria-hidden="true"></i>
+        <h3>Safe, Verified Drivers</h3>
+        <p>Professional, background-checked drivers ensure you get the safest journey experience on every route—always.</p>
+      </div>
+    </div>
+  </section>
+  
+
+  <footer>
+    <p>All Rights Reserved © TripTrack Cabs</p>
+  </footer>
+
+ 
+<!-- ✨ Stylesheet for autocomplete -->
+<link rel="stylesheet" href="public/css/autocomplete.css" />
+
+<!-- ✨ Scripts: flatpickr → booking → login → autocomplete -->
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script src="public/js/booking.js"></script>
+<script src="public/js/login.js"></script>
+<script src="public/js/autocomplete.js"></script>
+
+</body>
+</html>
+
